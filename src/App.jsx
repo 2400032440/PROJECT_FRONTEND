@@ -75,7 +75,6 @@ export default function App() {
   const [user, setUser] = useState(null)
   const [googleEnabled, setGoogleEnabled] = useState(false)
   const [googleDevFallback, setGoogleDevFallback] = useState(false)
-  const [health, setHealth] = useState('checking')
   const [healthTimestamp, setHealthTimestamp] = useState('')
   const [data, setData] = useState({ users: [], issues: [], updates: [], discussions: [] })
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'citizen' })
@@ -160,11 +159,10 @@ export default function App() {
       try {
         const healthJson = await apiRequest('/api/health')
         if (!isMounted) return
-        setHealth(healthJson.ok ? 'online' : 'offline')
         setHealthTimestamp(healthJson.date || '')
       } catch {
         if (!isMounted) return
-        setHealth('offline')
+        setHealthTimestamp('')
       }
     }
 
@@ -240,11 +238,11 @@ export default function App() {
     try {
       const payload =
         mode === 'login'
-          ? { email: form.email, password: form.password }
+          ? { email: form.email.trim(), password: form.password.trim() }
           : {
               name: form.name,
-              email: form.email,
-              password: form.password,
+              email: form.email.trim(),
+              password: form.password.trim(),
               role: form.role,
             }
 
